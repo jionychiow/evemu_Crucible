@@ -1,4 +1,4 @@
-/*
+﻿/*
  - ----------*-------------------------------------------------------------------------
  LICENSE:
  ------------------------------------------------------------------------------------
@@ -298,11 +298,18 @@ LOG_CATEGORY( DRONE )
 LOG_TYPE( DRONE, ERROR,   ENABLED, "DroneError" )
 LOG_TYPE( DRONE, WARNING, DISABLED, "DroneWarning" )
 LOG_TYPE( DRONE, MESSAGE, DISABLED, "DroneMsg" )
-LOG_TYPE( DRONE, INFO, DISABLED, "DroneInfo" )
-LOG_TYPE( DRONE, BIND, DISABLED, "DroneBind" )
-LOG_TYPE( DRONE, DUMP, DISABLED, "DroneDump" )
-LOG_TYPE( DRONE, TRACE, DISABLED, "DroneTrace" )
+LOG_TYPE( DRONE, INFO,    DISABLED, "DroneInfo" )
+LOG_TYPE( DRONE, DEBUG,   DISABLED, "DroneDebug" )
+LOG_TYPE( DRONE, BIND,    DISABLED, "DroneBind" )
+LOG_TYPE( DRONE, DUMP,    DISABLED, "DroneDump" )
+LOG_TYPE( DRONE, TRACE,   DISABLED, "DroneTrace" )
 LOG_TYPE( DRONE, AI_TRACE, DISABLED, "DroneAITrace" )
+LOG_TYPE( DRONE, AI_DEBUG, DISABLED, "DroneAIDebug" )
+LOG_TYPE( DRONE, ORBIT,    DISABLED, "DroneOrbit" )
+LOG_TYPE( DRONE, MOVE,     DISABLED, "DroneMove" )
+LOG_TYPE( DRONE, STATE,    DISABLED, "DroneState" )
+LOG_TYPE( DRONE, TARGET,   DISABLED, "DroneTarget" )
+LOG_TYPE( DRONE, COMBAT,   DISABLED, "DroneCombat" )
 
 LOG_CATEGORY( DUNG )
 LOG_TYPE( DUNG, ERROR,   ENABLED, "DungError" )
