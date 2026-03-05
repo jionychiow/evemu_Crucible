@@ -250,43 +250,66 @@ PyRep* CharacterDB::ValidateCharNameRep(std::string name)
              */
     // *name  is sent from client WITHOUT leading space, if there is one, and will not allow more than one space.
 
-    if (name.empty())
+    _log(CLIENT__MESSAGE, "ValidateCharNameRep: name='%s', length=%zu", name.c_str(), name.length());
+
+    if (name.empty()) {
+        _log(CLIENT__MESSAGE, "ValidateCharNameRep: empty name");
         return new PyInt(-1);
-    if (name.length() < 3)
+    }
+    if (name.length() < 3) {
+        _log(CLIENT__MESSAGE, "ValidateCharNameRep: name too short (length=%zu)", name.length());
         return new PyInt(-1);
-    if (name.length() > 37)    //client caps at 24
+    }
+    if (name.length() > 37) {
+        _log(CLIENT__MESSAGE, "ValidateCharNameRep: name too long (length=%zu)", name.length());
         return new PyInt(-2);
+    }
 
-    if (!sDatabase.IsSafeString(name.c_str()))
+    if (!sDatabase.IsSafeString(name.c_str())) {
+        _log(CLIENT__MESSAGE, "ValidateCharNameRep: IsSafeString failed");
         return new PyInt(-5);
+    }
 
-    for (const auto cur : badWords)
-        if (EvE::icontains(name, cur))
+    for (const auto cur : badWords) {
+        if (EvE::icontains(name, cur)) {
+            _log(CLIENT__MESSAGE, "ValidateCharNameRep: badWords matched '%s'", cur.c_str());
             return new PyInt(-5);
+        }
+    }
 
-    for (const auto cur : badChars)
-        if (EvE::icontains(name, cur))
+    for (const auto cur : badChars) {
+        if (EvE::icontains(name, cur)) {
+            _log(CLIENT__MESSAGE, "ValidateCharNameRep: badChars matched '%s'", cur.c_str());
             return new PyInt(-5);
+        }
+    }
 
     // check for consecutive spaces
-    if (EvE::icontains(name, "  "))
+    if (EvE::icontains(name, "  ")) {
+        _log(CLIENT__MESSAGE, "ValidateCharNameRep: consecutive spaces");
         return new PyInt(-7);
+    }
 
     // check for multiple spaces
     int found = name.find(" ");
     if (found != name.npos) {
         found = name.find(" ", found + 1, 1);
-        if (found != name.npos)
+        if (found != name.npos) {
+            _log(CLIENT__MESSAGE, "ValidateCharNameRep: multiple spaces");
             return new PyInt(-6);
+        }
     }
 
     std::string eName;
     sDatabase.DoEscapeString(eName, name.c_str());
     DBQueryResult res;
     sDatabase.RunQuery(res, "SELECT characterID FROM chrCharacters WHERE characterName LIKE '%s' ", eName.c_str() );
-    if (res.GetRowCount() > 0)  // name exists
+    if (res.GetRowCount() > 0) {
+        _log(CLIENT__MESSAGE, "ValidateCharNameRep: name already exists");
         return new PyInt(-101);
+    }
 
+    _log(CLIENT__MESSAGE, "ValidateCharNameRep: name is valid");
     /* if we got here the name is "new" */
     return PyStatic.NewOne();
 }

@@ -472,7 +472,7 @@ PyResult DogmaIMBound::RemoveTarget(PyCallArgs& call, PyInt* targetID) {
 }
 
 
-PyResult DogmaIMBound::GetAllInfo(PyCallArgs& call, PyBool* getCharInfo, PyBool* getShipInfo)
+PyResult DogmaIMBound::GetAllInfo(PyCallArgs& call, PyObject* getCharInfo, PyObject* getShipInfo)
 {
     // added more return data and updated logic (almost complete and mostly accurate) -allan 26Mar16
     // completed.  -allan 7Jan19
@@ -490,7 +490,15 @@ PyResult DogmaIMBound::GetAllInfo(PyCallArgs& call, PyBool* getCharInfo, PyBool*
         --still dont know what 'datas' are
         ** this has *something* to do with POS
         */
-    if (getShipInfo->value()) {
+    bool getShipInfoValue = false;
+    if (getShipInfo != nullptr && !getShipInfo->IsNone()) {
+        if (getShipInfo->IsBool()) {
+            getShipInfoValue = getShipInfo->AsBool()->value();
+        } else if (getShipInfo->IsInt()) {
+            getShipInfoValue = getShipInfo->AsInt()->value() != 0;
+        }
+    }
+    if (getShipInfoValue) {
         rsp->SetItemString("locationInfo", new PyDict());
     } else {
         rsp->SetItemString("locationInfo", PyStatic.NewNone());
@@ -502,7 +510,15 @@ PyResult DogmaIMBound::GetAllInfo(PyCallArgs& call, PyBool* getCharInfo, PyBool*
 
     // Set "charInfo" in the Dictionary  -fixed 24Mar16
     sItemFactory.SetUsingClient(pClient);
-    if (getCharInfo->value()) {
+    bool getCharInfoValue = false;
+    if (getCharInfo != nullptr && !getCharInfo->IsNone()) {
+        if (getCharInfo->IsBool()) {
+            getCharInfoValue = getCharInfo->AsBool()->value();
+        } else if (getCharInfo->IsInt()) {
+            getCharInfoValue = getCharInfo->AsInt()->value() != 0;
+        }
+    }
+    if (getCharInfoValue) {
         PyDict* charResult = pClient->GetChar()->GetCharInfo();
         if (charResult == nullptr) {
             _log(SERVICE__ERROR, "Unable to build char info for char %u", pClient->GetCharacterID());
@@ -516,7 +532,7 @@ PyResult DogmaIMBound::GetAllInfo(PyCallArgs& call, PyBool* getCharInfo, PyBool*
     }
 
     // Set "shipInfo" in the Dictionary  -fixed 26Mar16
-    if (getShipInfo->value()) {
+    if (getShipInfoValue) {
         PyDict* shipResult = pClient->GetShip()->GetShipInfo();
         if (shipResult == nullptr) {
             _log(SERVICE__ERROR, "Unable to build ship info for ship %u", pClient->GetShipID());

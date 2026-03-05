@@ -68,7 +68,7 @@ bool EVEPacketDispatcher::DispatchPacket(PyPacket* packet)
         }
         case CALL_REQ: {
             //check the string part, just for good measure
-            if (packet->type_string != "macho.CallReq") {
+            if (packet->type_string != "macho.CallReq" && packet->type_string != "carbon.common.script.net.machoNetPacket.CallReq") {
                 sLog.Error("EVEPacketDispatcher","Received CALL_REQ with invalid type string '%s'", packet->type_string.c_str());
                 return false;
             }
@@ -83,7 +83,7 @@ bool EVEPacketDispatcher::DispatchPacket(PyPacket* packet)
         }
         case CALL_RSP: {
             //check the string part, just for good measure
-            if (packet->type_string != "macho.CallRsp") {
+            if (packet->type_string != "macho.CallRsp" && packet->type_string != "carbon.common.script.net.machoNetPacket.CallRsp") {
                 sLog.Error("EVEPacketDispatcher","Received CALL_RSP with invalid type string '%s'", packet->type_string.c_str());
                 return false;
             }
