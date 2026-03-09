@@ -231,9 +231,9 @@ SET( dogmaim_SOURCE
      "${TARGET_SOURCE_DIR}/dogmaim/DogmaService.cpp" )
 
 SET( crimewatch_INCLUDE
-     "${TARGET_INCLUDE_DIR}/crimewatch/CrimewatchService.h")
+     "${TARGET_INCLUDE_DIR}/crimewatch/CrimeWatchService.h")
 SET( crimewatch_SOURCE
-     "${TARGET_SOURCE_DIR}/crimewatch/CrimewatchService.cpp" )
+     "${TARGET_SOURCE_DIR}/crimewatch/CrimeWatchService.cpp" )
 
 SET( dungeon_INCLUDE
      "${TARGET_INCLUDE_DIR}/dungeon/DungeonDB.h"
