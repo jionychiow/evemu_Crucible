@@ -2027,6 +2027,7 @@ void Client::InitSession(int32 characterID)
         pSession->SetInt("stationid2", stationID);
         pSession->SetInt("locationid", stationID);
         pSession->SetInt("worldspaceid", stationID);
+        pSession->SetInt("structureid", stationID);
     } else {
         m_locationID = solarSystemID;
         pSession->Clear("stationid");   //must be 0 in space
@@ -2035,6 +2036,7 @@ void Client::InitSession(int32 characterID)
         pSession->SetInt("shipid", m_shipId);
         pSession->SetInt("solarsystemid", solarSystemID);
         pSession->SetInt("locationid", solarSystemID);
+        pSession->Clear("structureid");
     }
 
     sDataMgr.GetSystemData(m_locationID, m_systemData);
@@ -2061,6 +2063,7 @@ void Client::UpdateSession()
         pSession->SetInt("stationid2", stationID);   // client uses this for continer location checks
         pSession->SetInt("worldspaceid", stationID);
         pSession->SetInt("locationid", stationID);
+        pSession->SetInt("structureid", stationID);
     } else {
         pSession->Clear("stationid");
         pSession->Clear("stationid2");
@@ -2068,6 +2071,7 @@ void Client::UpdateSession()
         pSession->SetInt("solarsystemid", solarsystemID); //  used to tell client they are in space
         pSession->SetInt("locationid", solarsystemID);
         pSession->SetInt("shipid", m_shipId);
+        pSession->Clear("structureid");
     }
 
     // solarsystemid2 is used by client to determine current system.  NOTE:  *MUST* be set to current system.

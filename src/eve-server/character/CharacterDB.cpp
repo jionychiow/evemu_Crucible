@@ -222,19 +222,189 @@ PyRep *CharacterDB::GetCharacterList(uint32 accountID) {
     DBQueryResult res;
     if (!sDatabase.RunQuery(res,
         "SELECT"
-        "  characterID,"
-        "  characterName,"
-        "  deletePrepareDateTime,"
-        "  gender,"
-        "  typeID"
-        " FROM chrCharacters"
-        " WHERE accountID=%u", accountID))
+        "  c.characterID,"
+        "  c.characterName,"
+        "  c.deletePrepareDateTime,"
+        "  c.gender,"
+        "  c.typeID,"
+        "  c.stationID,"
+        "  c.solarSystemID,"
+        "  c.logoffDateTime AS logoffDate,"
+        "  c.corporationID,"
+        "  co.allianceID,"
+        "  c.raceID,"
+        "  c.bloodlineID,"
+        "  c.ancestryID,"
+        "  c.freeRespecs,"
+        "  c.lastRespecDateTime,"
+        "  c.nextRespecDateTime,"
+        "  c.accountID,"
+        "  c.balance,"
+        "  c.aurBalance,"
+        "  c.logonMinutes,"
+        "  c.title,"
+        "  c.description,"
+        "  c.securityRating,"
+        "  c.locationID,"
+        "  c.constellationID,"
+        "  c.regionID,"
+        "  c.createDateTime,"
+        "  c.shipID,"
+        "  c.capsuleID,"
+        "  c.age,"
+        "  c.paperDollState,"
+        "  c.skillPoints,"
+        "  c.skillQueueEndTime,"
+        "  c.logonDateTime,"
+        "  c.online,"
+        "  c.bounty,"
+        "  c.baseID,"
+        "  c.corpAccountKey,"
+        "  c.corpRole,"
+        "  c.rolesAtAll,"
+        "  c.rolesAtHQ,"
+        "  c.rolesAtBase,"
+        "  c.rolesAtOther,"
+        "  c.grantableRoles,"
+        "  c.grantableRolesAtHQ,"
+        "  c.grantableRolesAtBase,"
+        "  c.grantableRolesAtOther,"
+        "  c.titleMask,"
+        "  c.blockRoles,"
+        "  c.startDateTime,"
+        "  c.careerID,"
+        "  c.schoolID,"
+        "  c.careerSpecialityID,"
+        "  0 AS shipTypeID,"
+        "  0 AS unreadMailCount,"
+        "  0 AS unprocessedNotifications,"
+        "  '' AS petitionMessage,"
+        "  '' AS finishedSkills,"
+        "  0 AS balanceChange,"
+        "  NULL AS skillTypeID,"
+        "  NULL AS toLevel,"
+        "  NULL AS trainingStartTime,"
+        "  NULL AS trainingEndTime,"
+        "  NULL AS queueEndTime,"
+        "  NULL AS finishSP,"
+        "  NULL AS trainedSP,"
+        "  NULL AS fromSP"
+        " FROM chrCharacters AS c"
+        "  LEFT JOIN crpCorporation AS co ON c.corporationID = co.corporationID"
+        " WHERE c.accountID=%u", accountID))
     {
         codelog(DATABASE__ERROR, "Error in query: %s", res.error.c_str());
         return nullptr;
     }
 
-    return DBResultToCRowset(res);
+    PyList* list = new PyList();
+    DBResultRow row;
+    while (res.GetRow(row)) {
+        PyDict* dict = new PyDict();
+        dict->SetItemString("characterID", new PyLong(row.GetUInt(0)));
+        dict->SetItemString("characterName", new PyString(row.GetText(1)));
+        dict->SetItemString("deletePrepareDateTime", new PyLong(row.GetUInt(2)));
+        dict->SetItemString("gender", new PyLong(row.GetUInt(3)));
+        dict->SetItemString("typeID", new PyLong(row.GetUInt(4)));
+        dict->SetItemString("stationID", new PyLong(row.GetUInt(5)));
+        dict->SetItemString("solarSystemID", new PyLong(row.GetUInt(6)));
+        dict->SetItemString("logoffDate", new PyLong(row.GetUInt(7)));
+        dict->SetItemString("corporationID", new PyLong(row.GetUInt(8)));
+        dict->SetItemString("allianceID", new PyLong(row.GetUInt(9)));
+        dict->SetItemString("raceID", new PyLong(row.GetUInt(10)));
+        dict->SetItemString("bloodlineID", new PyLong(row.GetUInt(11)));
+        dict->SetItemString("ancestryID", new PyLong(row.GetUInt(12)));
+        dict->SetItemString("freeRespecs", new PyLong(row.GetUInt(13)));
+        dict->SetItemString("lastRespecDateTime", new PyLong(row.GetUInt(14)));
+        dict->SetItemString("nextRespecDateTime", new PyLong(row.GetUInt(15)));
+        dict->SetItemString("accountID", new PyLong(row.GetUInt(16)));
+        dict->SetItemString("balance", new PyFloat(row.GetFloat(17)));
+        dict->SetItemString("aurBalance", new PyFloat(row.GetFloat(18)));
+        dict->SetItemString("logonMinutes", new PyLong(row.GetUInt(19)));
+        dict->SetItemString("title", new PyString(row.GetText(20)));
+        dict->SetItemString("description", new PyString(row.GetText(21)));
+        dict->SetItemString("securityRating", new PyFloat(row.GetFloat(22)));
+        dict->SetItemString("locationID", new PyLong(row.GetUInt(23)));
+        dict->SetItemString("constellationID", new PyLong(row.GetUInt(24)));
+        dict->SetItemString("regionID", new PyLong(row.GetUInt(25)));
+        dict->SetItemString("createDateTime", new PyLong(row.GetUInt(26)));
+        dict->SetItemString("shipID", new PyLong(row.GetUInt(27)));
+        dict->SetItemString("capsuleID", new PyLong(row.GetUInt(28)));
+        dict->SetItemString("age", new PyLong(row.GetUInt(29)));
+        dict->SetItemString("paperDollState", new PyLong(row.GetUInt(30)));
+        dict->SetItemString("skillPoints", new PyLong(row.GetUInt(31)));
+        dict->SetItemString("skillQueueEndTime", new PyLong(row.GetUInt(32)));
+        dict->SetItemString("logonDateTime", new PyLong(row.GetUInt(33)));
+        dict->SetItemString("online", new PyLong(row.GetUInt(34)));
+        dict->SetItemString("bounty", new PyFloat(row.GetFloat(35)));
+        dict->SetItemString("baseID", new PyLong(row.GetUInt(36)));
+        dict->SetItemString("corpAccountKey", new PyLong(row.GetUInt(37)));
+        dict->SetItemString("corpRole", new PyLong(row.GetUInt(38)));
+        dict->SetItemString("rolesAtAll", new PyLong(row.GetUInt(39)));
+        dict->SetItemString("rolesAtHQ", new PyLong(row.GetUInt(40)));
+        dict->SetItemString("rolesAtBase", new PyLong(row.GetUInt(41)));
+        dict->SetItemString("rolesAtOther", new PyLong(row.GetUInt(42)));
+        dict->SetItemString("grantableRoles", new PyLong(row.GetUInt(43)));
+        dict->SetItemString("grantableRolesAtHQ", new PyLong(row.GetUInt(44)));
+        dict->SetItemString("grantableRolesAtBase", new PyLong(row.GetUInt(45)));
+        dict->SetItemString("grantableRolesAtOther", new PyLong(row.GetUInt(46)));
+        dict->SetItemString("titleMask", new PyLong(row.GetUInt(47)));
+        dict->SetItemString("blockRoles", new PyLong(row.GetUInt(48)));
+        dict->SetItemString("startDateTime", new PyLong(row.GetUInt(49)));
+        dict->SetItemString("careerID", new PyLong(row.GetUInt(50)));
+        dict->SetItemString("schoolID", new PyLong(row.GetUInt(51)));
+        dict->SetItemString("careerSpecialityID", new PyLong(row.GetUInt(52)));
+        dict->SetItemString("shipTypeID", new PyLong(row.GetUInt(53)));
+        dict->SetItemString("unreadMailCount", new PyLong(row.GetUInt(54)));
+        dict->SetItemString("unprocessedNotifications", new PyLong(row.GetUInt(55)));
+        dict->SetItemString("petitionMessage", new PyString(row.GetText(56)));
+        dict->SetItemString("finishedSkills", new PyString(row.GetText(57)));
+        dict->SetItemString("balanceChange", new PyFloat(row.GetFloat(58)));
+        if (row.IsNull(59)) {
+            dict->SetItemString("skillTypeID", new PyNone());
+        } else {
+            dict->SetItemString("skillTypeID", new PyLong(row.GetUInt(59)));
+        }
+        if (row.IsNull(60)) {
+            dict->SetItemString("toLevel", new PyNone());
+        } else {
+            dict->SetItemString("toLevel", new PyLong(row.GetUInt(60)));
+        }
+        if (row.IsNull(61)) {
+            dict->SetItemString("trainingStartTime", new PyNone());
+        } else {
+            dict->SetItemString("trainingStartTime", new PyLong(row.GetUInt(61)));
+        }
+        if (row.IsNull(62)) {
+            dict->SetItemString("trainingEndTime", new PyNone());
+        } else {
+            dict->SetItemString("trainingEndTime", new PyLong(row.GetUInt(62)));
+        }
+        if (row.IsNull(63)) {
+            dict->SetItemString("queueEndTime", new PyNone());
+        } else {
+            dict->SetItemString("queueEndTime", new PyLong(row.GetUInt(63)));
+        }
+        if (row.IsNull(64)) {
+            dict->SetItemString("finishSP", new PyNone());
+        } else {
+            dict->SetItemString("finishSP", new PyLong(row.GetUInt(64)));
+        }
+        if (row.IsNull(65)) {
+            dict->SetItemString("trainedSP", new PyNone());
+        } else {
+            dict->SetItemString("trainedSP", new PyLong(row.GetUInt(65)));
+        }
+        if (row.IsNull(66)) {
+            dict->SetItemString("fromSP", new PyNone());
+        } else {
+            dict->SetItemString("fromSP", new PyLong(row.GetUInt(66)));
+        }
+        
+        list->AddItem(new PyObject("util.KeyVal", dict));
+    }
+
+    return list;
 }
 
 PyRep* CharacterDB::ValidateCharNameRep(std::string name)
@@ -1094,6 +1264,43 @@ bool CharacterDB::GetCharHomeStation(uint32 characterID, uint32 &stationID) {
     if (res.GetRow(row))
         stationID = row.GetUInt(0);
 	return true;
+}
+
+PyRep* CharacterDB::GetHomeStationRow(uint32 characterID) {
+    DBQueryResult res;
+    if (!sDatabase.RunQuery(res,
+        "SELECT e.locationID, s.solarSystemID, s.stationTypeID "
+        "FROM entity e "
+        "LEFT JOIN staStations s ON e.locationID = s.stationID "
+        "WHERE e.ownerID = %u "
+        "  AND e.flag=400",
+        characterID ))
+    {
+        _log(CHARACTER__ERROR, "Could't get home station row for char %u - query failed: %s", characterID, res.error.c_str());
+        return nullptr;
+    }
+
+    _log(CHARACTER__MESSAGE, "GetHomeStationRow: char %u returned %u rows", characterID, res.GetRowCount());
+
+    DBResultRow row;
+    if (!res.GetRow(row)) {
+        _log(CHARACTER__ERROR, "No home station found for char %u", characterID );
+        return nullptr;
+    }
+
+    uint32 stationID = row.GetUInt(0);
+    uint32 solarSystemID = row.GetUInt(1);
+    uint32 stationTypeID = row.GetUInt(2);
+
+    _log(CHARACTER__MESSAGE, "GetHomeStationRow: char %u - stationID=%u, solarSystemID=%u, stationTypeID=%u", characterID, stationID, solarSystemID, stationTypeID);
+
+    PyDict* result = new PyDict();
+    result->SetItemString("stationID", new PyInt(stationID));
+    result->SetItemString("solarSystemID", new PyInt(solarSystemID));
+    result->SetItemString("stationTypeID", new PyInt(stationTypeID));
+
+    PyObject* keyVal = new PyObject("util.KeyVal", result);
+    return keyVal;
 }
 
 //replace all the typeID of the character's clones

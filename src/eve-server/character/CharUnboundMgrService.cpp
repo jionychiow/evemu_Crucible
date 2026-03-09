@@ -143,14 +143,19 @@ PyResult CharUnboundMgrService::GetCharacterSelectionData(PyCallArgs &call) {
         return nullptr;
     }
     
-    PyDict* userDetails = new PyDict();
-    userDetails->SetItem(new PyString("accountID"), new PyLong(row.GetUInt(0)));
-    userDetails->SetItem(new PyString("accountName"), new PyString(row.GetText(1)));
-    userDetails->SetItem(new PyString("logonCount"), new PyLong(row.GetUInt(2)));
-    userDetails->SetItem(new PyString("lastLogin"), new PyLong(row.GetUInt(3)));
+    PyDict* userDetailsDict = new PyDict();
+    userDetailsDict->SetItemString("accountID", new PyLong(row.GetUInt(0)));
+    userDetailsDict->SetItemString("accountName", new PyString(row.GetText(1)));
+    userDetailsDict->SetItemString("logonCount", new PyLong(row.GetUInt(2)));
+    userDetailsDict->SetItemString("lastLogin", new PyLong(row.GetUInt(3)));
+    userDetailsDict->SetItemString("subscriptionEndTime", new PyLong(0));
+    userDetailsDict->SetItemString("maxCharacterSlots", new PyLong(5));
+    userDetailsDict->SetItemString("characterSlots", new PyLong(5));
+    userDetailsDict->SetItemString("userName", new PyString(row.GetText(1)));
+    userDetailsDict->SetItemString("creationDate", new PyLong(0));
     
     PyTuple* userDetailsTuple = new PyTuple(1);
-    userDetailsTuple->SetItem(0, userDetails);
+    userDetailsTuple->SetItem(0, new PyObject("util.KeyVal", userDetailsDict));
     
     PyTuple* trainingDetails = new PyTuple(0);
     
@@ -225,6 +230,9 @@ PyResult CharUnboundMgrService::CreateCharacterWithDoll(PyCallArgs &call, PyRep*
 
     Client* pClient = call.client;
     pClient->CreateChar(true);
+
+    // mark that we have received the portrait
+    pClient->SetPicRec(true);
 
     if (!pClient->RecPic())
         pClient->SendInfoModalMsg("The Portrait for this character was not received.  Your character will still be created, but the server will not have their picture.");

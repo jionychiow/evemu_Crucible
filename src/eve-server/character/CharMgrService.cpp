@@ -119,6 +119,7 @@ CharMgrService::CharMgrService(EVEServiceManager& mgr) :
     this->Add("GetContactList", &CharMgrService::GetContactList);
     this->Add("GetCloneTypeID", &CharMgrService::GetCloneTypeID);
     this->Add("GetHomeStation", &CharMgrService::GetHomeStation);
+    this->Add("GetHomeStationRow", &CharMgrService::GetHomeStationRow);
     this->Add("GetFactions", &CharMgrService::GetFactions);
     this->Add("SetActivityStatus", &CharMgrService::SetActivityStatus);
     this->Add("GetSettingsInfo", &CharMgrService::GetSettingsInfo);
@@ -153,7 +154,7 @@ BoundDispatcher* CharMgrService::BindObject(Client *client, PyRep* bindParameter
     //crap
     PyRep* tmp(bindParameters->Clone());
     if (!args.Decode(&tmp)) {
-        codelog(SERVICE__ERROR, "%s: Failed to decode arguments.", GetName());
+        codelog(SERVICE__ERROR, "%s: Failed to decode arguments.", this->GetName());
         return nullptr;
     }
 
@@ -284,6 +285,18 @@ PyResult CharMgrService::GetHomeStation(PyCallArgs& call)
 		return PyStatic.NewNone();
 	}
     return new PyInt(stationID);
+}
+
+PyResult CharMgrService::GetHomeStationRow(PyCallArgs& call)
+{
+    sLog.Debug("CharMgrService", "GetHomeStationRow called for Char %u (%s)", call.client->GetCharacterID(), call.client->GetName());
+    PyRep* result = CharacterDB::GetHomeStationRow(call.client->GetCharacterID());
+    if (result == nullptr) {
+        sLog.Error( "CharMgrService", "Could't get the home station row for Char %u", call.client->GetCharacterID() );
+        return PyStatic.NewNone();
+    }
+    sLog.Debug("CharMgrService", "GetHomeStationRow returned successfully for Char %u", call.client->GetCharacterID());
+    return result;
 }
 
 PyResult CharMgrService::SetActivityStatus(PyCallArgs& call, PyInt* afk, PyInt* secondsAFK) {

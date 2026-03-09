@@ -73,6 +73,7 @@
 #include "character/PaperDollService.h"
 #include "character/PhotoUploadService.h"
 #include "character/SkillMgrService.h"
+#include "skillmgr2/SkillMgr2Service.h"
 // chat services
 #include "chat/LookupService.h"
 #include "chat/LSCService.h"
@@ -97,6 +98,15 @@
 // dogmaim services
 #include "dogmaim/DogmaIMService.h"
 #include "dogmaim/DogmaService.h"
+// crimewatch service
+#include "crimewatch/CrimewatchService.h"
+#include "projectdiscovery/ProjectDiscoveryService.h"
+#include "eventlog/EventLogService.h"
+#include "lscproxy/LSCProxyService.h"
+#include "achievementtracker/AchievementTrackerMgrService.h"
+#include "structuresettings/StructureSettingsService.h"
+#include "structuredirectory/StructureDirectoryService.h"
+#include "seasonmanager/SeasonManagerService.h"
 #include "effects/EffectsDataMgr.h"
 // dungeon services
 #include "dungeon/DungeonExplorationMgrService.h"
@@ -744,7 +754,16 @@ int main( int argc, char* argv[] )
     newSvcMgr.Register(new InsuranceService(newSvcMgr));
     newSvcMgr.Register(new AllianceRegistry(newSvcMgr));
     newSvcMgr.Register(new DogmaIMService(newSvcMgr));
+    newSvcMgr.Register(new CrimewatchService(newSvcMgr));
     newSvcMgr.Register(new CorpRegistryService(newSvcMgr));
+    newSvcMgr.Register(new SkillMgr2Service(newSvcMgr));
+    newSvcMgr.Register(new ProjectDiscoveryService());
+    newSvcMgr.Register(new EventLogService());
+    newSvcMgr.Register(new LSCProxyService());
+    newSvcMgr.Register(new AchievementTrackerMgrService());
+    newSvcMgr.Register(new StructureSettingsService());
+    newSvcMgr.Register(new StructureDirectoryService());
+    newSvcMgr.Register(new SeasonManagerService());
 
     // keep a reference to cache in the old manager so it still works
     // TODO: REMOVE ONCE THE CHANGES ARE DONE

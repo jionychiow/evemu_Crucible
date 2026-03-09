@@ -133,7 +133,7 @@ bool EVEPacketDispatcher::DispatchPacket(PyPacket* packet)
         }
         case PING_REQ: {
             //check the string part, just for good measure
-            if (packet->type_string != "macho.PingReq") {
+            if (packet->type_string != "macho.PingReq" && packet->type_string != "carbon.common.script.net.machoNetPacket.PingReq") {
                 sLog.Error("EVEPacketDispatcher","Received PING_REQ with invalid type string '%s'", packet->type_string.c_str());
                 return false;
             }
@@ -195,8 +195,8 @@ bool EVEPacketDispatcher::Handle_SessionChange(PyPacket* packet, SessionChangeNo
 
 bool EVEPacketDispatcher::Handle_PingReq(PyPacket* packet)
 {
-    sLog.Error("EVEPacketDispatcher","Unhandled Ping Request.");
-    return false;
+    sLog.Blue("EVEPacketDispatcher","Ping Request received.");
+    return true;
 }
 bool EVEPacketDispatcher::Handle_PingRsp(PyPacket* packet)
 {

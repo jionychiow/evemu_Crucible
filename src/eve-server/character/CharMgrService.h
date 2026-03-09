@@ -53,6 +53,7 @@ protected:
     PyResult GetContactList(PyCallArgs& call);
     PyResult GetCloneTypeID(PyCallArgs& call);
     PyResult GetHomeStation(PyCallArgs& call);
+    PyResult GetHomeStationRow(PyCallArgs& call);
     PyResult GetFactions(PyCallArgs& call);
     PyResult SetActivityStatus(PyCallArgs& call, PyInt* afk, PyInt* secondsAFK);
     PyResult GetSettingsInfo(PyCallArgs& call);

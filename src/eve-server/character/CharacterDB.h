@@ -103,6 +103,7 @@ public:
     static bool GetCharacterData(uint32 characterID, CharacterData &into);
     static void GetCharacterDataMap(uint32 charID, std::map<std::string, int64> &characterDataMap);
     static bool GetCharHomeStation(uint32 charID, uint32 &stationID);
+    static PyRep* GetHomeStationRow(uint32 charID);
     //if you want to get the typeID of the clone use GetActiveCloneType
     static bool GetActiveCloneID(uint32 charID, uint32 &itemID);
     static PyRep *GetInfoWindowDataForChar(uint32 charID);

@@ -143,7 +143,9 @@ SET( character_INCLUDE
      "${TARGET_INCLUDE_DIR}/character/PaperDollService.h"
      "${TARGET_INCLUDE_DIR}/character/PhotoUploadService.h"
      "${TARGET_INCLUDE_DIR}/character/Skill.h"
-     "${TARGET_INCLUDE_DIR}/character/SkillMgrService.h" )
+     "${TARGET_INCLUDE_DIR}/character/SkillMgrService.h"
+     "${TARGET_INCLUDE_DIR}/skillmgr2/SkillMgr2Service.h"
+     "${TARGET_INCLUDE_DIR}/skillmgr2/SkillHandler.h" )
 SET( character_SOURCE
      "${TARGET_SOURCE_DIR}/character/AggressionMgrService.cpp"
      "${TARGET_SOURCE_DIR}/character/CertificateMgrDB.cpp"
@@ -157,7 +159,9 @@ SET( character_SOURCE
      "${TARGET_SOURCE_DIR}/character/PaperDollService.cpp"
      "${TARGET_SOURCE_DIR}/character/PhotoUploadService.cpp"
      "${TARGET_SOURCE_DIR}/character/Skill.cpp"
-     "${TARGET_SOURCE_DIR}/character/SkillMgrService.cpp" )
+     "${TARGET_SOURCE_DIR}/character/SkillMgrService.cpp"
+     "${TARGET_SOURCE_DIR}/skillmgr2/SkillMgr2Service.cpp"
+     "${TARGET_SOURCE_DIR}/skillmgr2/SkillHandler.cpp" )
 
 SET( chat_INCLUDE
      "${TARGET_INCLUDE_DIR}/chat/LookupService.h"
@@ -225,6 +229,11 @@ SET( dogmaim_INCLUDE
 SET( dogmaim_SOURCE
      "${TARGET_SOURCE_DIR}/dogmaim/DogmaIMService.cpp"
      "${TARGET_SOURCE_DIR}/dogmaim/DogmaService.cpp" )
+
+SET( crimewatch_INCLUDE
+     "${TARGET_INCLUDE_DIR}/crimewatch/CrimewatchService.h")
+SET( crimewatch_SOURCE
+     "${TARGET_SOURCE_DIR}/crimewatch/CrimewatchService.cpp" )
 
 SET( dungeon_INCLUDE
      "${TARGET_INCLUDE_DIR}/dungeon/DungeonDB.h"
@@ -621,9 +630,23 @@ SET( system_managers_SOURCE
      "${TARGET_SOURCE_DIR}/system/cosmicMgrs/WormholeMgr.cpp")
 
 SET( test_INCLUDE
-    "${TARGET_INCLUDE_DIR}/testing/test.h")
+    "${TARGET_INCLUDE_DIR}/testing/test.h"
+    "${TARGET_INCLUDE_DIR}/projectdiscovery/ProjectDiscoveryService.h"
+    "${TARGET_INCLUDE_DIR}/eventlog/EventLogService.h"
+    "${TARGET_INCLUDE_DIR}/lscproxy/LSCProxyService.h"
+    "${TARGET_INCLUDE_DIR}/achievementtracker/AchievementTrackerMgrService.h"
+    "${TARGET_INCLUDE_DIR}/structuresettings/StructureSettingsService.h"
+    "${TARGET_INCLUDE_DIR}/structuredirectory/StructureDirectoryService.h"
+    "${TARGET_INCLUDE_DIR}/seasonmanager/SeasonManagerService.h")
 SET( test_SOURCE
-    "${TARGET_SOURCE_DIR}/testing/test.cpp")
+    "${TARGET_SOURCE_DIR}/testing/test.cpp"
+    "${TARGET_SOURCE_DIR}/projectdiscovery/ProjectDiscoveryService.cpp"
+    "${TARGET_SOURCE_DIR}/eventlog/EventLogService.cpp"
+    "${TARGET_SOURCE_DIR}/lscproxy/LSCProxyService.cpp"
+    "${TARGET_SOURCE_DIR}/achievementtracker/AchievementTrackerMgrService.cpp"
+    "${TARGET_SOURCE_DIR}/structuresettings/StructureSettingsService.cpp"
+    "${TARGET_SOURCE_DIR}/structuredirectory/StructureDirectoryService.cpp"
+    "${TARGET_SOURCE_DIR}/seasonmanager/SeasonManagerService.cpp")
 
 SET( services_INCLUDE
      "${TARGET_INCLUDE_DIR}/services/Service.h"
@@ -653,6 +676,7 @@ SOURCE_GROUP( "src\\config"        FILES ${config_INCLUDE} )
 SOURCE_GROUP( "src\\contract"      FILES ${contract_INCLUDE} )
 SOURCE_GROUP( "src\\corporation"   FILES ${corporation_INCLUDE} )
 SOURCE_GROUP( "src\\dogmaim"       FILES ${dogmaim_INCLUDE} )
+SOURCE_GROUP( "src\\crimewatch"    FILES ${crimewatch_INCLUDE} )
 SOURCE_GROUP( "src\\dungeon"       FILES ${dungeon_INCLUDE} )
 SOURCE_GROUP( "src\\effects"       FILES ${effects_INCLUDE} )
 SOURCE_GROUP( "src\\exploration"   FILES ${explore_INCLUDE} )
@@ -692,6 +716,7 @@ SOURCE_GROUP( "src\\config"        FILES ${config_SOURCE} )
 SOURCE_GROUP( "src\\contract"      FILES ${contract_SOURCE} )
 SOURCE_GROUP( "src\\corporation"   FILES ${corporation_SOURCE} )
 SOURCE_GROUP( "src\\dogmaim"       FILES ${dogmaim_SOURCE} )
+SOURCE_GROUP( "src\\crimewatch"    FILES ${crimewatch_SOURCE} )
 SOURCE_GROUP( "src\\dungeon"       FILES ${dungeon_SOURCE} )
 SOURCE_GROUP( "src\\effects"       FILES ${effects_SOURCE} )
 SOURCE_GROUP( "src\\exploration"   FILES ${explore_SOURCE} )
@@ -718,6 +743,20 @@ SOURCE_GROUP( "src\\system"        FILES ${system_SOURCE} )
 SOURCE_GROUP( "src\\system\\sov"   FILES ${system_sov_SOURCE} )
 SOURCE_GROUP( "src\\system\\cosmicMgrs"  FILES ${system_managers_SOURCE} )
 SOURCE_GROUP( "src\\system\\test"  FILES ${test_SOURCE} )
+SOURCE_GROUP( "src\\projectdiscovery"  FILES ${projectdiscovery_INCLUDE} )
+SOURCE_GROUP( "src\\projectdiscovery"  FILES ${projectdiscovery_SOURCE} )
+SOURCE_GROUP( "src\\eventlog"  FILES ${eventlog_INCLUDE} )
+SOURCE_GROUP( "src\\eventlog"  FILES ${eventlog_SOURCE} )
+SOURCE_GROUP( "src\\lscproxy"  FILES ${lscproxy_INCLUDE} )
+SOURCE_GROUP( "src\\lscproxy"  FILES ${lscproxy_SOURCE} )
+SOURCE_GROUP( "src\\achievementtracker"  FILES ${achievementtracker_INCLUDE} )
+SOURCE_GROUP( "src\\achievementtracker"  FILES ${achievementtracker_SOURCE} )
+SOURCE_GROUP( "src\\structuresettings"  FILES ${structuresettings_INCLUDE} )
+SOURCE_GROUP( "src\\structuresettings"  FILES ${structuresettings_SOURCE} )
+SOURCE_GROUP( "src\\structuredirectory"  FILES ${structuredirectory_INCLUDE} )
+SOURCE_GROUP( "src\\structuredirectory"  FILES ${structuredirectory_SOURCE} )
+SOURCE_GROUP( "src\\seasonmanager"  FILES ${seasonmanager_INCLUDE} )
+SOURCE_GROUP( "src\\seasonmanager"  FILES ${seasonmanager_SOURCE} )
 
 ADD_EXECUTABLE( "${TARGET_NAME}"
                 ${INCLUDE}                ${SOURCE}
@@ -732,6 +771,7 @@ ADD_EXECUTABLE( "${TARGET_NAME}"
                 ${contract_INCLUDE}       ${contract_SOURCE}
                 ${corporation_INCLUDE}    ${corporation_SOURCE}
                 ${dogmaim_INCLUDE}        ${dogmaim_SOURCE}
+                ${crimewatch_INCLUDE}     ${crimewatch_SOURCE}
                 ${dungeon_INCLUDE}        ${dungeon_SOURCE}
                 ${effects_INCLUDE}        ${effects_SOURCE}
                 ${explore_INCLUDE}        ${explore_SOURCE}
@@ -758,6 +798,14 @@ ADD_EXECUTABLE( "${TARGET_NAME}"
                 ${system_sov_INCLUDE}     ${system_sov_SOURCE}
                 ${system_managers_INCLUDE} ${system_managers_SOURCE}
                 ${test_INCLUDE}           ${test_SOURCE}
+                ${skillmgr2_INCLUDE}      ${skillmgr2_SOURCE}
+                ${projectdiscovery_INCLUDE} ${projectdiscovery_SOURCE}
+                ${eventlog_INCLUDE}       ${eventlog_SOURCE}
+                ${lscproxy_INCLUDE}       ${lscproxy_SOURCE}
+                ${achievementtracker_INCLUDE} ${achievementtracker_SOURCE}
+                ${structuresettings_INCLUDE} ${structuresettings_SOURCE}
+                ${structuredirectory_INCLUDE} ${structuredirectory_SOURCE}
+                ${seasonmanager_INCLUDE}    ${seasonmanager_SOURCE}
                 )
 
 target_precompile_headers( "${TARGET_NAME}" PUBLIC
