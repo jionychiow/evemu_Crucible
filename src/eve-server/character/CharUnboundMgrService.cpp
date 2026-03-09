@@ -149,8 +149,8 @@ PyResult CharUnboundMgrService::GetCharacterSelectionData(PyCallArgs &call) {
     userDetailsDict->SetItemString("logonCount", new PyLong(row.GetUInt(2)));
     userDetailsDict->SetItemString("lastLogin", new PyLong(row.GetUInt(3)));
     userDetailsDict->SetItemString("subscriptionEndTime", new PyLong(0));
-    userDetailsDict->SetItemString("maxCharacterSlots", new PyLong(5));
-    userDetailsDict->SetItemString("characterSlots", new PyLong(5));
+    userDetailsDict->SetItemString("maxCharacterSlots", new PyLong(3));
+    userDetailsDict->SetItemString("characterSlots", new PyLong(3));
     userDetailsDict->SetItemString("userName", new PyString(row.GetText(1)));
     userDetailsDict->SetItemString("creationDate", new PyLong(0));
     
