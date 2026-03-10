@@ -252,7 +252,7 @@ PyRep *CharacterDB::GetCharacterList(uint32 accountID) {
         "  c.shipID,"
         "  c.capsuleID,"
         "  c.age,"
-        "  c.paperDollState,"
+        "  c.paperDollState AS paperdollState,"
         "  c.skillPoints,"
         "  c.skillQueueEndTime,"
         "  c.logonDateTime,"
@@ -275,7 +275,7 @@ PyRep *CharacterDB::GetCharacterList(uint32 accountID) {
         "  c.careerID,"
         "  c.schoolID,"
         "  c.careerSpecialityID,"
-        "  0 AS shipTypeID,"
+        "  (SELECT typeID FROM entity WHERE itemID = c.shipID) AS shipTypeID,"
         "  0 AS unreadMailCount,"
         "  0 AS unprocessedNotifications,"
         "  '' AS petitionMessage,"
@@ -303,7 +303,11 @@ PyRep *CharacterDB::GetCharacterList(uint32 accountID) {
         PyDict* dict = new PyDict();
         dict->SetItemString("characterID", new PyLong(row.GetUInt(0)));
         dict->SetItemString("characterName", new PyString(row.GetText(1)));
-        dict->SetItemString("deletePrepareDateTime", new PyLong(row.GetUInt(2)));
+        if (row.IsNull(2) || row.GetUInt(2) == 0) {
+            dict->SetItemString("deletePrepareDateTime", new PyNone());
+        } else {
+            dict->SetItemString("deletePrepareDateTime", new PyLong(row.GetUInt(2)));
+        }
         dict->SetItemString("gender", new PyLong(row.GetUInt(3)));
         dict->SetItemString("typeID", new PyLong(row.GetUInt(4)));
         dict->SetItemString("stationID", new PyLong(row.GetUInt(5)));
@@ -331,7 +335,7 @@ PyRep *CharacterDB::GetCharacterList(uint32 accountID) {
         dict->SetItemString("shipID", new PyLong(row.GetUInt(27)));
         dict->SetItemString("capsuleID", new PyLong(row.GetUInt(28)));
         dict->SetItemString("age", new PyLong(row.GetUInt(29)));
-        dict->SetItemString("paperDollState", new PyLong(row.GetUInt(30)));
+        dict->SetItemString("paperdollState", new PyLong(row.GetUInt(30)));
         dict->SetItemString("skillPoints", new PyLong(row.GetUInt(31)));
         dict->SetItemString("skillQueueEndTime", new PyLong(row.GetUInt(32)));
         dict->SetItemString("logonDateTime", new PyLong(row.GetUInt(33)));
