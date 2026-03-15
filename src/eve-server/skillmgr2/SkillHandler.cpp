@@ -55,12 +55,14 @@ PyResult SkillHandler::GetSkills(PyCallArgs& call)
         uint32 typeID = skillItem->typeID();
         uint32 level = skillItem->GetAttribute(AttrSkillLevel).get_uint32();
         int64 points = skillItem->GetAttribute(AttrSkillPoints).get_int();
+        float rank = skillItem->GetAttribute(AttrSkillTimeConstant).get_float();
         
         PyDict* skillInfo = new PyDict();
         skillInfo->SetItem("skillLevel", new PyInt((int32)level));
         skillInfo->SetItem("skillPoints", new PyLong(points));
+        skillInfo->SetItem("skillRank", new PyFloat(rank));
         
-        skills->SetItem(new PyInt(typeID), skillInfo);
+        skills->SetItem(new PyInt(typeID), new PyObject("util.KeyVal", skillInfo));
     }
     
     return skills;

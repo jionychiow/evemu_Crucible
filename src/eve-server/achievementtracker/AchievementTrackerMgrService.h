@@ -37,6 +37,7 @@ protected:
     PyResult GetProgressForAchievement(PyCallArgs &call);
     PyResult GetProgressForChar(PyCallArgs &call);
     PyResult GetProgressForCharAndAchievement(PyCallArgs &call);
+    PyResult GetCompletedAchievementsAndClientEventCount(PyCallArgs &call);
 };
 
 #endif

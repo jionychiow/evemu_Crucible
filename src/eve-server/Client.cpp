@@ -2021,18 +2021,18 @@ void Client::InitSession(int32 characterID)
      */
     if (sDataMgr.IsStation(stationID)) {
         m_locationID = stationID;
-        pSession->Clear("solarsystemid");    //must be 0 in station
-        pSession->Clear("shipid");    //must be 0 in station
+        pSession->Clear("solarsystemid");
+        pSession->Clear("shipid");
         pSession->SetInt("stationid", stationID);
         pSession->SetInt("stationid2", stationID);
         pSession->SetInt("locationid", stationID);
         pSession->SetInt("worldspaceid", stationID);
-        pSession->SetInt("structureid", stationID);
+        pSession->Clear("structureid");
     } else {
         m_locationID = solarSystemID;
-        pSession->Clear("stationid");   //must be 0 in space
-        pSession->Clear("stationid2");  //must be 0 in space
-        pSession->Clear("worldspaceid");  //must be 0 in space
+        pSession->Clear("stationid");
+        pSession->Clear("stationid2");
+        pSession->Clear("worldspaceid");
         pSession->SetInt("shipid", m_shipId);
         pSession->SetInt("solarsystemid", solarSystemID);
         pSession->SetInt("locationid", solarSystemID);
@@ -2060,15 +2060,15 @@ void Client::UpdateSession()
         //pSession->Clear("worldspaceid");    //not used here (yet)
 
         pSession->SetInt("stationid", stationID);
-        pSession->SetInt("stationid2", stationID);   // client uses this for continer location checks
+        pSession->SetInt("stationid2", stationID);
         pSession->SetInt("worldspaceid", stationID);
         pSession->SetInt("locationid", stationID);
-        pSession->SetInt("structureid", stationID);
+        pSession->Clear("structureid");
     } else {
         pSession->Clear("stationid");
         pSession->Clear("stationid2");
         pSession->Clear("worldspaceid");
-        pSession->SetInt("solarsystemid", solarsystemID); //  used to tell client they are in space
+        pSession->SetInt("solarsystemid", solarsystemID);
         pSession->SetInt("locationid", solarsystemID);
         pSession->SetInt("shipid", m_shipId);
         pSession->Clear("structureid");

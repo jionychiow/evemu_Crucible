@@ -1211,6 +1211,7 @@ bool InventoryItem::Populate(Rsp_CommonGetInfo_Entry& result )
     PySafeDecRef(result.itemID);
     PySafeDecRef(result.invItem);
     result.time = GetFileTimeNow();
+    result.wallclockTime = GetFileTimeNow();
     // this is only to display item name in logs.  client ignores it
     result.description = m_data.name;
 

@@ -123,6 +123,7 @@ CharMgrService::CharMgrService(EVEServiceManager& mgr) :
     this->Add("GetFactions", &CharMgrService::GetFactions);
     this->Add("SetActivityStatus", &CharMgrService::SetActivityStatus);
     this->Add("GetSettingsInfo", &CharMgrService::GetSettingsInfo);
+    this->Add("GetCharacterSettings", &CharMgrService::GetCharacterSettings);
     this->Add("LogSettings", &CharMgrService::LogSettings);
     this->Add("GetCharacterDescription", &CharMgrService::GetCharacterDescription);
     this->Add("SetCharacterDescription", &CharMgrService::SetCharacterDescription);
@@ -384,6 +385,11 @@ PyResult CharMgrService::GetSettingsInfo(PyCallArgs& call) {
 
     res->items[ 1 ] = new PyInt( 0 );
     return res;
+}
+
+PyResult CharMgrService::GetCharacterSettings(PyCallArgs& call) {
+    sLog.Debug("CharMgrService", "GetCharacterSettings called - returning empty dict");
+    return new PyDict();
 }
 
 // this takes in the value returned from the function we return in GetSettingsInfo

@@ -29,10 +29,24 @@ StructureDirectoryService::StructureDirectoryService() :
     Service("structureDirectory")
 {
     this->Add("GetMyDockableStructures", &StructureDirectoryService::GetMyDockableStructures);
+    this->Add("GetStructuresInSystem", &StructureDirectoryService::GetStructuresInSystem);
+    this->Add("GetStructureMapData", &StructureDirectoryService::GetStructureMapData);
 }
 
 PyResult StructureDirectoryService::GetMyDockableStructures(PyCallArgs& call)
 {
     sLog.Debug("StructureDirectoryService", "GetMyDockableStructures called - stub");
+    return new PyList();
+}
+
+PyResult StructureDirectoryService::GetStructuresInSystem(PyCallArgs& call)
+{
+    sLog.Debug("StructureDirectoryService", "GetStructuresInSystem called - returning empty list");
+    return new PyList();
+}
+
+PyResult StructureDirectoryService::GetStructureMapData(PyCallArgs& call)
+{
+    sLog.Debug("StructureDirectoryService", "GetStructureMapData called - returning empty list");
     return new PyList();
 }

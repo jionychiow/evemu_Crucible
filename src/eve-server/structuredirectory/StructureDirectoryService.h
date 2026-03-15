@@ -32,6 +32,8 @@ public:
 
 protected:
     PyResult GetMyDockableStructures(PyCallArgs &call);
+    PyResult GetStructuresInSystem(PyCallArgs &call);
+    PyResult GetStructureMapData(PyCallArgs &call);
 };
 
 #endif

@@ -558,7 +558,19 @@ PyResult DogmaIMBound::GetAllInfo(PyCallArgs& call, PyRep* getCharInfo, PyRep* g
             _log(SERVICE__MESSAGE, "dogmaIM::GetAllInfo returning None (char info failed)");
             return PyStatic.NewNone();
         }
-        rsp->SetItemString("charInfo", charResult);
+        
+        // Create charBrain tuple: (brainID, charEffects, shipEffects, structureEffects)
+        PyTuple* charBrain = new PyTuple(4);
+        charBrain->SetItem(0, new PyInt(pClient->GetCharacterID())); // brainID
+        charBrain->SetItem(1, new PyList()); // charEffects (empty list)
+        charBrain->SetItem(2, new PyList()); // shipEffects (empty list)
+        charBrain->SetItem(3, new PyList()); // structureEffects (empty list)
+        
+        // Create charInfo tuple: (charInfoDict, charBrain)
+        PyTuple* charInfoTuple = new PyTuple(2);
+        charInfoTuple->SetItem(0, charResult);
+        charInfoTuple->SetItem(1, charBrain);
+        rsp->SetItemString("charInfo", charInfoTuple);
     } else {
         rsp->SetItemString("charInfo", new PyDict());
     }

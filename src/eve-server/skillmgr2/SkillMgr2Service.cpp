@@ -51,8 +51,26 @@ BoundDispatcher* SkillMgr2Service::BindObject(Client* client, PyRep* bindParamet
 
 PyResult SkillMgr2Service::GetMySkillHandler(PyCallArgs& call)
 {
-    sLog.Debug("SkillMgr2Service", "GetMySkillHandler called - returning None (binding handled by MachoBindObject)");
-    return PyStatic.NewNone();
+    sLog.Debug("SkillMgr2Service", "GetMySkillHandler called - creating bound object");
+    
+    PyRep* bindParameters = new PyNone();
+    
+    BoundDispatcher* bound = this->BindObject(call.client, bindParameters);
+    
+    if (bound == nullptr) {
+        sLog.Error("SkillMgr2Service", "BindObject returned nullptr");
+        return PyStatic.NewNone();
+    }
+    
+    bound->NewReference(call.client);
+    
+    PyDict* byName = new PyDict();
+    byName->SetItem("OID+", bound->GetOID());
+    
+    PySubStruct* subStruct = new PySubStruct(new PySubStream(bound->GetOID()));
+    
+    PyResult result(subStruct, byName);
+    return result;
 }
 
 PyResult SkillMgr2Service::GetSkills(PyCallArgs& call)

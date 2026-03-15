@@ -62,25 +62,37 @@ void CrimewatchService::BoundReleased(CrimewatchBound* bound)
 
 PyResult CrimewatchBound::GetClientStates(PyCallArgs& call)
 {
-    PyDict* result = new PyDict();
-    
-    PyDict* combatTimers = new PyDict();
-    combatTimers->SetItemString("combatTimers", new PyList());
-    combatTimers->SetItemString("duelTimers", new PyList());
-    combatTimers->SetItemString("weaponTimers", new PyList());
-    combatTimers->SetItemString("otherTimers", new PyList());
-    result->SetItemString("combatTimers", combatTimers);
-    
+    PyTuple* result = new PyTuple(4);
+
+    PyTuple* myCombatTimers = new PyTuple(4);
+    PyTuple* weaponTimer = new PyTuple(2);
+    weaponTimer->SetItem(0, new PyInt(0));
+    weaponTimer->SetItem(1, PyStatic.NewNone());
+    PyTuple* pvpTimer = new PyTuple(2);
+    pvpTimer->SetItem(0, new PyInt(0));
+    pvpTimer->SetItem(1, PyStatic.NewNone());
+    PyTuple* npcTimer = new PyTuple(2);
+    npcTimer->SetItem(0, new PyInt(0));
+    npcTimer->SetItem(1, PyStatic.NewNone());
+    PyTuple* criminalTimer = new PyTuple(2);
+    criminalTimer->SetItem(0, new PyInt(0));
+    criminalTimer->SetItem(1, PyStatic.NewNone());
+    myCombatTimers->SetItem(0, weaponTimer);
+    myCombatTimers->SetItem(1, pvpTimer);
+    myCombatTimers->SetItem(2, npcTimer);
+    myCombatTimers->SetItem(3, criminalTimer);
+    result->SetItem(0, myCombatTimers);
+
     PyDict* engagementsDict = new PyDict();
-    result->SetItemString("engagements", engagementsDict);
-    
-    PyDict* flaggedChars = new PyDict();
-    flaggedChars->SetItemString("chars", new PyList());
-    flaggedChars->SetItemString("ships", new PyList());
-    result->SetItemString("flaggedCharacters", flaggedChars);
-    
-    result->SetItemString("safetyLevel", new PyInt(3));
-    
+    result->SetItem(1, engagementsDict);
+
+    PyTuple* flaggedCharacters = new PyTuple(2);
+    flaggedCharacters->SetItem(0, new PyList());
+    flaggedCharacters->SetItem(1, new PyList());
+    result->SetItem(2, flaggedCharacters);
+
+    result->SetItem(3, new PyInt(3));
+
     return result;
 }
 

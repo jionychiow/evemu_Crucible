@@ -34,6 +34,7 @@ AchievementTrackerMgrService::AchievementTrackerMgrService() :
     this->Add("GetProgressForAchievement", &AchievementTrackerMgrService::GetProgressForAchievement);
     this->Add("GetProgressForChar", &AchievementTrackerMgrService::GetProgressForChar);
     this->Add("GetProgressForCharAndAchievement", &AchievementTrackerMgrService::GetProgressForCharAndAchievement);
+    this->Add("GetCompletedAchievementsAndClientEventCount", &AchievementTrackerMgrService::GetCompletedAchievementsAndClientEventCount);
 }
 
 PyResult AchievementTrackerMgrService::GetAchievements(PyCallArgs& call)
@@ -70,4 +71,15 @@ PyResult AchievementTrackerMgrService::GetProgressForCharAndAchievement(PyCallAr
 {
     sLog.Debug("AchievementTrackerMgrService", "GetProgressForCharAndAchievement called - stub");
     return new PyDict();
+}
+
+PyResult AchievementTrackerMgrService::GetCompletedAchievementsAndClientEventCount(PyCallArgs& call)
+{
+    sLog.Debug("AchievementTrackerMgrService", "GetCompletedAchievementsAndClientEventCount called - returning empty dicts");
+    
+    PyDict* result = new PyDict();
+    result->SetItemString("completedDict", new PyDict());
+    result->SetItemString("eventDict", new PyDict());
+    
+    return result;
 }
