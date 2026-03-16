@@ -33,6 +33,6 @@ SeasonManagerService::SeasonManagerService() :
 
 PyResult SeasonManagerService::get_current_season(PyCallArgs& call)
 {
-    sLog.Debug("SeasonManagerService", "get_current_season called - stub");
+    sLog.Debug("SeasonManagerService", "get_current_season called - returning None (no active season)");
     return PyStatic.NewNone();
 }

@@ -35,6 +35,8 @@ public:
 protected:
     PyResult GetSkills(PyCallArgs& call);
     PyResult GetAttributes(PyCallArgs& call);
+    PyResult GetSkillQueueAndFreePoints(PyCallArgs& call);
+    PyResult GetSkillHistory(PyCallArgs& call);
 
 private:
     SkillMgr2Service& m_parent;

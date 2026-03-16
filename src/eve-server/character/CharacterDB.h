@@ -213,7 +213,7 @@ public:
     bool        SaveSkillQueue(uint32 charID, SkillQueue &queue);
     bool        SavePausedSkillQueue(uint32 charID, SkillQueue &queue);
     void        SaveSkillHistory(uint16 eventID, double logDate, uint32 characterID, uint32 skillTypeID, uint8 skillLevel, uint32 absolutePoints);
-    PyRep*      GetSkillHistory(uint32 charID);
+    PyRep*      GetSkillHistory(uint32 characterID);
     void        UpdateSkillQueueEndTime(int64 endtime, uint32 charID);
 
     void        SetLogInTime(uint32 charID);

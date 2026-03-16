@@ -34,6 +34,7 @@ protected:
     PyResult GetChannels(PyCallArgs &call);
     PyResult JoinChannels(PyCallArgs &call);
     PyResult LeaveChannels(PyCallArgs &call);
+    PyResult LeaveChannel(PyCallArgs &call);
     PyResult CreateChannel(PyCallArgs &call);
     PyResult Configure(PyCallArgs &call);
     PyResult DestroyChannel(PyCallArgs &call);

@@ -225,10 +225,12 @@ SET( corporation_SOURCE
 
 SET( dogmaim_INCLUDE
      "${TARGET_INCLUDE_DIR}/dogmaim/DogmaIMService.h"
-     "${TARGET_INCLUDE_DIR}/dogmaim/DogmaService.h")
+     "${TARGET_INCLUDE_DIR}/dogmaim/DogmaService.h"
+     "${TARGET_INCLUDE_DIR}/dogmaim/GodmaService.h")
 SET( dogmaim_SOURCE
      "${TARGET_SOURCE_DIR}/dogmaim/DogmaIMService.cpp"
-     "${TARGET_SOURCE_DIR}/dogmaim/DogmaService.cpp" )
+     "${TARGET_SOURCE_DIR}/dogmaim/DogmaService.cpp"
+     "${TARGET_SOURCE_DIR}/dogmaim/GodmaService.cpp" )
 
 SET( crimewatch_INCLUDE
      "${TARGET_INCLUDE_DIR}/crimewatch/CrimeWatchService.h")
@@ -476,13 +478,19 @@ SET( ship_INCLUDE
      "${TARGET_INCLUDE_DIR}/ship/Missile.h"
      "${TARGET_INCLUDE_DIR}/ship/Ship.h"
      "${TARGET_INCLUDE_DIR}/ship/ShipDB.h"
-     "${TARGET_INCLUDE_DIR}/ship/ShipService.h")
+     "${TARGET_INCLUDE_DIR}/ship/ShipService.h"
+     "${TARGET_INCLUDE_DIR}/ship/ShipSkinMgrService.h"
+     "${TARGET_INCLUDE_DIR}/ship/FighterMgrService.h"
+     "${TARGET_INCLUDE_DIR}/ship/ShipKillCounterService.h")
 SET( ship_SOURCE
      "${TARGET_SOURCE_DIR}/ship/BeyonceService.cpp"
      "${TARGET_SOURCE_DIR}/ship/Missile.cpp"
      "${TARGET_SOURCE_DIR}/ship/Ship.cpp"
      "${TARGET_SOURCE_DIR}/ship/ShipDB.cpp"
-     "${TARGET_SOURCE_DIR}/ship/ShipService.cpp" )
+     "${TARGET_SOURCE_DIR}/ship/ShipService.cpp"
+     "${TARGET_SOURCE_DIR}/ship/ShipSkinMgrService.cpp"
+     "${TARGET_SOURCE_DIR}/ship/FighterMgrService.cpp"
+     "${TARGET_SOURCE_DIR}/ship/ShipKillCounterService.cpp")
 
 SET( ship_modules_INCLUDE
      "${TARGET_INCLUDE_DIR}/ship/modules/ActiveModule.h"
@@ -521,6 +529,11 @@ SET( standing_SOURCE
      "${TARGET_SOURCE_DIR}/standing/Standing.cpp"
      "${TARGET_SOURCE_DIR}/standing/StandingDB.cpp"
      "${TARGET_SOURCE_DIR}/standing/StandingMgr.cpp" )
+
+SET( bounty_INCLUDE
+     "${TARGET_INCLUDE_DIR}/bounty/BountyProxyService.h" )
+SET( bounty_SOURCE
+     "${TARGET_SOURCE_DIR}/bounty/BountyProxyService.cpp" )
 
 SET( station_INCLUDE
      "${TARGET_INCLUDE_DIR}/station/HoloscreenMgrService.h"
@@ -648,6 +661,41 @@ SET( test_SOURCE
     "${TARGET_SOURCE_DIR}/structuredirectory/StructureDirectoryService.cpp"
     "${TARGET_SOURCE_DIR}/seasonmanager/SeasonManagerService.cpp")
 
+SET( projectdiscovery_INCLUDE
+     "${TARGET_INCLUDE_DIR}/projectdiscovery/ProjectDiscoveryService.h")
+SET( projectdiscovery_SOURCE
+     "${TARGET_SOURCE_DIR}/projectdiscovery/ProjectDiscoveryService.cpp")
+
+SET( eventlog_INCLUDE
+     "${TARGET_INCLUDE_DIR}/eventlog/EventLogService.h")
+SET( eventlog_SOURCE
+     "${TARGET_SOURCE_DIR}/eventlog/EventLogService.cpp")
+
+SET( lscproxy_INCLUDE
+     "${TARGET_INCLUDE_DIR}/lscproxy/LSCProxyService.h")
+SET( lscproxy_SOURCE
+     "${TARGET_SOURCE_DIR}/lscproxy/LSCProxyService.cpp")
+
+SET( achievementtracker_INCLUDE
+     "${TARGET_INCLUDE_DIR}/achievementtracker/AchievementTrackerMgrService.h")
+SET( achievementtracker_SOURCE
+     "${TARGET_SOURCE_DIR}/achievementtracker/AchievementTrackerMgrService.cpp")
+
+SET( structuresettings_INCLUDE
+     "${TARGET_INCLUDE_DIR}/structuresettings/StructureSettingsService.h")
+SET( structuresettings_SOURCE
+     "${TARGET_SOURCE_DIR}/structuresettings/StructureSettingsService.cpp")
+
+SET( structuredirectory_INCLUDE
+     "${TARGET_INCLUDE_DIR}/structuredirectory/StructureDirectoryService.h")
+SET( structuredirectory_SOURCE
+     "${TARGET_SOURCE_DIR}/structuredirectory/StructureDirectoryService.cpp")
+
+SET( seasonmanager_INCLUDE
+     "${TARGET_INCLUDE_DIR}/seasonmanager/SeasonManagerService.h")
+SET( seasonmanager_SOURCE
+     "${TARGET_SOURCE_DIR}/seasonmanager/SeasonManagerService.cpp")
+
 SET( services_INCLUDE
      "${TARGET_INCLUDE_DIR}/services/Service.h"
      "${TARGET_INCLUDE_DIR}/services/Callable.h"
@@ -698,6 +746,7 @@ SOURCE_GROUP( "src\\services"      FILES ${services_INCLUDE} )
 SOURCE_GROUP( "src\\ship"          FILES ${ship_INCLUDE} )
 SOURCE_GROUP( "src\\ship\\modules" FILES ${ship_modules_INCLUDE} )
 SOURCE_GROUP( "src\\standing"      FILES ${standing_INCLUDE} )
+SOURCE_GROUP( "src\\bounty"        FILES ${bounty_INCLUDE} )
 SOURCE_GROUP( "src\\station"       FILES ${station_INCLUDE} )
 SOURCE_GROUP( "src\\system"        FILES ${system_INCLUDE} )
 SOURCE_GROUP( "src\\system\\sov"   FILES ${system_sov_INCLUDE} )
@@ -738,6 +787,7 @@ SOURCE_GROUP( "src\\services"      FILES ${services_SOURCE} )
 SOURCE_GROUP( "src\\ship"          FILES ${ship_SOURCE} )
 SOURCE_GROUP( "src\\ship\\modules" FILES ${ship_modules_SOURCE} )
 SOURCE_GROUP( "src\\standing"      FILES ${standing_SOURCE} )
+SOURCE_GROUP( "src\\bounty"        FILES ${bounty_SOURCE} )
 SOURCE_GROUP( "src\\station"       FILES ${station_SOURCE} )
 SOURCE_GROUP( "src\\system"        FILES ${system_SOURCE} )
 SOURCE_GROUP( "src\\system\\sov"   FILES ${system_sov_SOURCE} )
@@ -793,6 +843,7 @@ ADD_EXECUTABLE( "${TARGET_NAME}"
                 ${ship_INCLUDE}           ${ship_SOURCE}
                 ${ship_modules_INCLUDE}   ${ship_modules_SOURCE}
                 ${standing_INCLUDE}       ${standing_SOURCE}
+                ${bounty_INCLUDE}        ${bounty_SOURCE}
                 ${station_INCLUDE}        ${station_SOURCE}
                 ${system_INCLUDE}         ${system_SOURCE}
                 ${system_sov_INCLUDE}     ${system_sov_SOURCE}

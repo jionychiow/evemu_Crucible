@@ -1272,6 +1272,12 @@ bool InventoryItem::Populate(Rsp_CommonGetInfo_Entry& result )
         }
     }
 
+    if (m_type.categoryID() == EVEDB::invCategories::Ship) {
+        if (result.attributes.find(AttrFighterCapacity) == result.attributes.end()) {
+            result.attributes[AttrFighterCapacity] = new PyInt(0);
+        }
+    }
+
     return true;
 }
 

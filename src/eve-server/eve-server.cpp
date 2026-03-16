@@ -57,6 +57,8 @@
 #include "agents/AgentMgrService.h"
 // alliance services
 #include "alliance/AllianceRegistry.h"
+// bounty services
+#include "bounty/BountyProxyService.h"
 // calendar services
 #include "system/CalendarMgrService.h"
 #include "system/CalendarProxy.h"
@@ -98,6 +100,7 @@
 // dogmaim services
 #include "dogmaim/DogmaIMService.h"
 #include "dogmaim/DogmaService.h"
+#include "dogmaim/GodmaService.h"
 // crimewatch service
 #include "crimewatch/CrimewatchService.h"
 #include "projectdiscovery/ProjectDiscoveryService.h"
@@ -162,6 +165,9 @@
 // ship services
 #include "ship/BeyonceService.h"
 #include "ship/ShipService.h"
+#include "ship/ShipSkinMgrService.h"
+#include "ship/FighterMgrService.h"
+#include "ship/ShipKillCounterService.h"
 // standing services
 #include "standing/Standing.h"
 #include "standing/StandingMgr.h"
@@ -691,6 +697,7 @@ int main( int argc, char* argv[] )
     newSvcMgr.Register(new EntityService(newSvcMgr));
     newSvcMgr.Register(new FleetProxy());
     newSvcMgr.Register(new DogmaService());
+    newSvcMgr.Register(new GodmaService());
     newSvcMgr.Register(new BeyonceService(newSvcMgr));
     newSvcMgr.Register(new DungeonService());
     newSvcMgr.Register(new LookupService());
@@ -699,6 +706,9 @@ int main( int argc, char* argv[] )
     newSvcMgr.Register(new AgentMgrService(newSvcMgr));
     newSvcMgr.Register(new ScanMgrService(newSvcMgr));
     newSvcMgr.Register(new ShipService(newSvcMgr));
+    newSvcMgr.Register(new ShipSkinMgrService());
+    newSvcMgr.Register(new FighterMgrService());
+    newSvcMgr.Register(new ShipKillCounterService());
     newSvcMgr.Register(new SkillMgrService(newSvcMgr));
     newSvcMgr.Register(new TradeService(newSvcMgr));
     newSvcMgr.Register(new PlanetORB(newSvcMgr));
@@ -764,6 +774,7 @@ int main( int argc, char* argv[] )
     newSvcMgr.Register(new StructureSettingsService());
     newSvcMgr.Register(new StructureDirectoryService());
     newSvcMgr.Register(new SeasonManagerService());
+    newSvcMgr.Register(new BountyProxyService());
 
     // keep a reference to cache in the old manager so it still works
     // TODO: REMOVE ONCE THE CHANGES ARE DONE

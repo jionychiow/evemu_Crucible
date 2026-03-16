@@ -1275,7 +1275,7 @@ PyRep* CharacterDB::GetHomeStationRow(uint32 characterID) {
     if (!sDatabase.RunQuery(res,
         "SELECT e.locationID, s.solarSystemID, s.stationTypeID "
         "FROM entity e "
-        "LEFT JOIN staStations s ON e.locationID = s.stationID "
+        "LEFT JOIN stastations s ON e.locationID = s.stationID "
         "WHERE e.ownerID = %u "
         "  AND e.flag=400",
         characterID ))
@@ -1888,10 +1888,14 @@ PyRep* CharacterDB::GetSkillHistory(uint32 characterID) {
         " LIMIT 50",
         characterID )) {
         codelog(DATABASE__ERROR, "Error in query: %s", res.error.c_str());
-        return nullptr;
+        return new PyList();
     }
 
-    return DBResultToRowset(res);
+    PyRep* result = DBResultToCRowset(res);
+    if (result == nullptr) {
+        return new PyList();
+    }
+    return result;
 }
 
 void CharacterDB::UpdateSkillQueueEndTime(int64 endtime, uint32 charID) {
@@ -2100,36 +2104,31 @@ PyRep* CharacterDB::List(uint32 ownerID)
 
 PyRep* CharacterDB::ListStations(uint32 ownerID, std::ostringstream& flagIDs, bool forCorp/*false*/, bool bpOnly/*false*/)
 {
-    /** @todo check into this to see if we're querying POS modules(uk) also.
-     * if so, we'll need to revise location checks and somehow fix it so customs offices (and anything else using flagHangar)
-     *  doesnt show up, which leads to elusive "AttributeError: 'NoneType' object has no attribute 'solarSystemID'"  in client
-     *  when locationID is NOT station
-     */
     DBQueryResult res;
-    /** @todo these queries are wrong....  (location and maybe owner)*/
     if (bpOnly) {
         if (forCorp) {
-            // this is some funky shit to get correct stationID for corp bps in hangar, as their location is officeID, but we need stationID for this call
             if (!sDatabase.RunQuery(res,
-                "SELECT o.stationID, COUNT(e.itemID) as blueprintCount"
+                "SELECT o.stationID, s.solarSystemID, COUNT(e.itemID) as blueprintCount"
                 " FROM entity AS e"
                 "  LEFT JOIN invTypes USING (typeID)"
                 "  LEFT JOIN invGroups AS g USING (groupID)"
                 "  LEFT JOIN staOffices as o ON o.itemID = e.locationID"
+                "  LEFT JOIN stastations as s ON s.stationID = o.stationID"
                 " WHERE e.ownerID=%u AND e.flag IN (%s) AND g.categoryID = %u AND (e.locationID >= %u AND e.locationID <= %u)"
-                " GROUP BY locationID", ownerID, flagIDs.str().c_str(), EVEDB::invCategories::Blueprint, minOffice, maxOffice))
+                " GROUP BY o.stationID, s.solarSystemID", ownerID, flagIDs.str().c_str(), EVEDB::invCategories::Blueprint, minOffice, maxOffice))
             {
                 codelog(SERVICE__ERROR, "Error in ListStations query: %s", res.error.c_str());
                 return nullptr;
             }
         } else {
             if (!sDatabase.RunQuery(res,
-                "SELECT e.locationID AS stationID, COUNT(e.itemID) as blueprintCount"
+                "SELECT e.locationID AS stationID, s.solarSystemID, COUNT(e.itemID) as blueprintCount"
                 " FROM entity AS e"
                 "  LEFT JOIN invTypes USING (typeID)"
                 "  LEFT JOIN invGroups AS g USING (groupID)"
+                "  LEFT JOIN stastations as s ON s.stationID = e.locationID"
                 " WHERE e.ownerID=%u AND e.flag IN (%s) AND g.categoryID = %u AND e.locationID <= %u"
-                " GROUP BY locationID", ownerID, flagIDs.str().c_str(), EVEDB::invCategories::Blueprint, maxStation))
+                " GROUP BY e.locationID, s.solarSystemID", ownerID, flagIDs.str().c_str(), EVEDB::invCategories::Blueprint, maxStation))
             {
                 codelog(SERVICE__ERROR, "Error in ListStations query: %s", res.error.c_str());
                 return nullptr;
@@ -2137,22 +2136,24 @@ PyRep* CharacterDB::ListStations(uint32 ownerID, std::ostringstream& flagIDs, bo
         }
     } else {
         if (forCorp) {
-            // this is some funky shit to get correct stationID for corp bps in hangar, as their location is officeID, but we need stationID for this call
             if (!sDatabase.RunQuery(res,
-                "SELECT o.stationID, COUNT(e.itemID) as itemCount"
+                "SELECT o.stationID, s.solarSystemID, COUNT(e.itemID) as itemCount"
                 " FROM entity AS e"
                 "  LEFT JOIN staOffices as o ON o.itemID = e.locationID"
+                "  LEFT JOIN stastations as s ON s.stationID = o.stationID"
                 " WHERE e.ownerID=%u AND e.flag IN (%s) AND (e.locationID >= %u AND e.locationID <= %u)"
-                " GROUP BY locationID", ownerID, flagIDs.str().c_str(), minOffice, maxOffice))
+                " GROUP BY o.stationID, s.solarSystemID", ownerID, flagIDs.str().c_str(), minOffice, maxOffice))
             {
                 codelog(SERVICE__ERROR, "Error in ListStations query: %s", res.error.c_str());
                 return nullptr;
             }
         } else {
             if (!sDatabase.RunQuery(res,
-                "SELECT locationID AS stationID, COUNT(itemID) as itemCount"
-                " FROM entity WHERE ownerID=%u AND flag IN (%s) AND locationID <= %u"
-                " GROUP BY locationID", ownerID, flagIDs.str().c_str(), maxStation))
+                "SELECT e.locationID AS stationID, s.solarSystemID, COUNT(e.itemID) as itemCount"
+                " FROM entity AS e"
+                "  LEFT JOIN stastations as s ON s.stationID = e.locationID"
+                " WHERE e.ownerID=%u AND e.flag IN (%s) AND e.locationID <= %u"
+                " GROUP BY e.locationID, s.solarSystemID", ownerID, flagIDs.str().c_str(), maxStation))
             {
                 codelog(SERVICE__ERROR, "Error in ListStations query: %s", res.error.c_str());
                 return nullptr;

@@ -20,50 +20,21 @@
     Place - Suite 330, Boston, MA 02111-1307, USA, or go to
     http://www.gnu.org/copyleft/lesser.txt.
     ------------------------------------------------------------------------------------
-    Author:        Zhur
+    Author:        EVEmu Team
 */
 
+#ifndef _SHIP_KILL_COUNTER_SERVICE_H
+#define _SHIP_KILL_COUNTER_SERVICE_H
 
-#ifndef __INSURANCE_SERVICE_H_INCL__
-#define __INSURANCE_SERVICE_H_INCL__
+#include "services/Service.h"
 
-#include "ship/ShipDB.h"
-#include "services/BoundService.h"
-
-class InsuranceBound;
-
-class InsuranceService : public BindableService <InsuranceService, InsuranceBound> {
+class ShipKillCounterService : public Service<ShipKillCounterService> {
 public:
-    InsuranceService(EVEServiceManager& mgr);
-
-    void BoundReleased (InsuranceBound* bound) override;
+    ShipKillCounterService();
+    virtual ~ShipKillCounterService();
 
 protected:
-    ShipDB m_db;
-
-    PyResult GetContractForShip(PyCallArgs& call, PyInt* shipID);
-    PyResult GetInsurancePrice(PyCallArgs& call, PyInt* typeID);
-    PyResult GetInsurancePrices(PyCallArgs& call, PyList* typeIDs);
-
-    BoundDispatcher* BindObject(Client *client, PyRep* bindParameters);
+    PyResult GetItemKillCountPlayer(PyCallArgs &call, PyInt* itemID);
 };
 
-class InsuranceBound : public EVEBoundObject <InsuranceBound>
-{
-public:
-    InsuranceBound(EVEServiceManager& mgr, InsuranceService& parent, ShipDB* db);
-
-protected:
-    PyResult InsureShip(PyCallArgs& call, PyInt* shipID, PyFloat* amount, std::optional<PyInt*> isCorporation);
-    PyResult UnInsureShip(PyCallArgs& call, PyInt* shipID);
-    PyResult GetContracts(PyCallArgs& call, std::optional<PyRep*> isCorporation);
-    PyResult GetInsurancePrice(PyCallArgs& call, PyInt* typeID);
-
-protected:
-    ShipDB* m_db;
-    LSCService* m_lsc;
-};
-
-#endif
-
-
+#endif//_SHIP_KILL_COUNTER_SERVICE_H

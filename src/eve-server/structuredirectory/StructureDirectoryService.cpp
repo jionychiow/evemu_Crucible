@@ -26,7 +26,7 @@
 #include "structuredirectory/StructureDirectoryService.h"
 
 StructureDirectoryService::StructureDirectoryService() :
-    Service("structureDirectory")
+    Service<StructureDirectoryService>("structureDirectory")
 {
     this->Add("GetMyDockableStructures", &StructureDirectoryService::GetMyDockableStructures);
     this->Add("GetStructuresInSystem", &StructureDirectoryService::GetStructuresInSystem);
@@ -35,18 +35,24 @@ StructureDirectoryService::StructureDirectoryService() :
 
 PyResult StructureDirectoryService::GetMyDockableStructures(PyCallArgs& call)
 {
-    sLog.Debug("StructureDirectoryService", "GetMyDockableStructures called - stub");
-    return new PyList();
+    sLog.Debug("StructureDirectoryService", "GetMyDockableStructures called");
+    
+    PyList* list = new PyList();
+    sLog.Debug("StructureDirectoryService", "GetMyDockableStructures: Returning empty list with %zu items", list->size());
+    
+    return list;
 }
 
 PyResult StructureDirectoryService::GetStructuresInSystem(PyCallArgs& call)
 {
     sLog.Debug("StructureDirectoryService", "GetStructuresInSystem called - returning empty list");
-    return new PyList();
+    PyList* list = new PyList();
+    return list;
 }
 
 PyResult StructureDirectoryService::GetStructureMapData(PyCallArgs& call)
 {
     sLog.Debug("StructureDirectoryService", "GetStructureMapData called - returning empty list");
-    return new PyList();
+    PyList* list = new PyList();
+    return list;
 }

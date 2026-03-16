@@ -26,11 +26,12 @@
 #include "lscproxy/LSCProxyService.h"
 
 LSCProxyService::LSCProxyService() :
-    Service("lscProxy")
+    Service<LSCProxyService>("lscProxy")
 {
     this->Add("GetChannels", &LSCProxyService::GetChannels);
     this->Add("JoinChannels", &LSCProxyService::JoinChannels);
     this->Add("LeaveChannels", &LSCProxyService::LeaveChannels);
+    this->Add("LeaveChannel", &LSCProxyService::LeaveChannel);
     this->Add("CreateChannel", &LSCProxyService::CreateChannel);
     this->Add("Configure", &LSCProxyService::Configure);
     this->Add("DestroyChannel", &LSCProxyService::DestroyChannel);
@@ -53,13 +54,51 @@ PyResult LSCProxyService::GetChannels(PyCallArgs& call)
 
 PyResult LSCProxyService::JoinChannels(PyCallArgs& call)
 {
-    sLog.Debug("LSCProxyService", "JoinChannels called - returning empty list");
-    return new PyList();
+    sLog.Debug("LSCProxyService", "JoinChannels called");
+    
+    PyList* result = new PyList();
+    
+    // Get the list of channel IDs from the call arguments
+    // The call arguments are: (channelIDs, role)
+    // where channelIDs is a list of channel IDs or tuples
+    if (call.tuple && call.tuple->size() > 0) {
+        PyList* channelIDs = call.tuple->GetItem(0)->AsList();
+        if (channelIDs != nullptr) {
+            sLog.Debug("LSCProxyService", "JoinChannels: Processing %zu channel IDs", channelIDs->size());
+            for (size_t i = 0; i < channelIDs->size(); ++i) {
+                PyInt* channelID = channelIDs->GetItem(i)->AsInt();
+                if (channelID != nullptr) {
+                    // Create a tuple for each channel: (channelID, ok, tmp)
+                    PyTuple* channelTuple = new PyTuple(3);
+                    channelTuple->SetItem(0, channelID->Clone()); // channelID
+                    channelTuple->SetItem(1, new PyInt(0)); // ok = 0 (failed)
+                    channelTuple->SetItem(2, PyStatic.NewNone()); // tmp = None
+                    result->AddItem(channelTuple);
+                    sLog.Debug("LSCProxyService", "JoinChannels: Added channel ID %d to result", channelID->value());
+                } else {
+                    sLog.Warning("LSCProxyService", "JoinChannels: Channel ID at index %zu is not an integer", i);
+                }
+            }
+        } else {
+            sLog.Warning("LSCProxyService", "JoinChannels: First argument is not a list");
+        }
+    } else {
+        sLog.Warning("LSCProxyService", "JoinChannels: No arguments provided");
+    }
+    
+    sLog.Debug("LSCProxyService", "JoinChannels: Returning %zu results", result->size());
+    return result;
 }
 
 PyResult LSCProxyService::LeaveChannels(PyCallArgs& call)
 {
     sLog.Debug("LSCProxyService", "LeaveChannels called - returning empty list");
+    return new PyList();
+}
+
+PyResult LSCProxyService::LeaveChannel(PyCallArgs& call)
+{
+    sLog.Debug("LSCProxyService", "LeaveChannel called - returning empty list");
     return new PyList();
 }
 

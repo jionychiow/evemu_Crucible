@@ -20,50 +20,27 @@
     Place - Suite 330, Boston, MA 02111-1307, USA, or go to
     http://www.gnu.org/copyleft/lesser.txt.
     ------------------------------------------------------------------------------------
-    Author:        Zhur
+    Author:        EVEmu Team
 */
 
+#include "eve-server.h"
 
-#ifndef __INSURANCE_SERVICE_H_INCL__
-#define __INSURANCE_SERVICE_H_INCL__
+#include "ship/ShipKillCounterService.h"
 
-#include "ship/ShipDB.h"
-#include "services/BoundService.h"
-
-class InsuranceBound;
-
-class InsuranceService : public BindableService <InsuranceService, InsuranceBound> {
-public:
-    InsuranceService(EVEServiceManager& mgr);
-
-    void BoundReleased (InsuranceBound* bound) override;
-
-protected:
-    ShipDB m_db;
-
-    PyResult GetContractForShip(PyCallArgs& call, PyInt* shipID);
-    PyResult GetInsurancePrice(PyCallArgs& call, PyInt* typeID);
-    PyResult GetInsurancePrices(PyCallArgs& call, PyList* typeIDs);
-
-    BoundDispatcher* BindObject(Client *client, PyRep* bindParameters);
-};
-
-class InsuranceBound : public EVEBoundObject <InsuranceBound>
+ShipKillCounterService::ShipKillCounterService() :
+    Service("shipKillCounter", eAccessLevel_Character)
 {
-public:
-    InsuranceBound(EVEServiceManager& mgr, InsuranceService& parent, ShipDB* db);
+    this->Add("GetItemKillCountPlayer", &ShipKillCounterService::GetItemKillCountPlayer);
+}
 
-protected:
-    PyResult InsureShip(PyCallArgs& call, PyInt* shipID, PyFloat* amount, std::optional<PyInt*> isCorporation);
-    PyResult UnInsureShip(PyCallArgs& call, PyInt* shipID);
-    PyResult GetContracts(PyCallArgs& call, std::optional<PyRep*> isCorporation);
-    PyResult GetInsurancePrice(PyCallArgs& call, PyInt* typeID);
+ShipKillCounterService::~ShipKillCounterService()
+{
+}
 
-protected:
-    ShipDB* m_db;
-    LSCService* m_lsc;
-};
+PyResult ShipKillCounterService::GetItemKillCountPlayer(PyCallArgs &call, PyInt* itemID)
+{
+    _log(SERVICE__MESSAGE, "shipKillCounter::GetItemKillCountPlayer called for item %u", 
+         itemID ? itemID->value() : 0);
 
-#endif
-
-
+    return new PyInt(0);
+}

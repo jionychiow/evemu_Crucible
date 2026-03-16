@@ -32,6 +32,8 @@ SkillHandler::SkillHandler(EVEServiceManager& mgr, SkillMgr2Service& parent) :
 {
     this->Add("GetSkills", &SkillHandler::GetSkills);
     this->Add("GetAttributes", &SkillHandler::GetAttributes);
+    this->Add("GetSkillQueueAndFreePoints", &SkillHandler::GetSkillQueueAndFreePoints);
+    this->Add("GetSkillHistory", &SkillHandler::GetSkillHistory);
 }
 
 PyResult SkillHandler::GetSkills(PyCallArgs& call)
@@ -86,4 +88,41 @@ PyResult SkillHandler::GetAttributes(PyCallArgs& call)
     attrs->SetItem(new PyString("memory"), cref->GetAttribute(AttrMemory).GetPyObject());
     
     return attrs;
+}
+
+PyResult SkillHandler::GetSkillQueueAndFreePoints(PyCallArgs& call)
+{
+    sLog.Debug("SkillHandler", "GetSkillQueueAndFreePoints called - returning skill queue");
+    
+    CharacterRef cref = call.client->GetChar();
+    if (!cref) {
+        sLog.Error("SkillHandler", "GetSkillQueueAndFreePoints: No character found for client %u", call.client->GetCharacterID());
+        PyTuple* result = new PyTuple(2);
+        result->SetItem(0, new PyList());
+        result->SetItem(1, new PyLong(0));
+        return result;
+    }
+    
+    return cref->SendSkillQueue();
+}
+
+PyResult SkillHandler::GetSkillHistory(PyCallArgs& call)
+{
+    sLog.Debug("SkillHandler", "GetSkillHistory called - returning skill history");
+    
+    CharacterRef cref = call.client->GetChar();
+    if (!cref) {
+        sLog.Error("SkillHandler", "GetSkillHistory: No character found for client %u", call.client->GetCharacterID());
+        PyList* result = new PyList();
+        return result;
+    }
+    
+    PyRep* history = cref->GetSkillHistory();
+    if (!history) {
+        sLog.Warning("SkillHandler", "GetSkillHistory: No skill history found for character %u", call.client->GetCharacterID());
+        PyList* result = new PyList();
+        return result;
+    }
+    
+    return history;
 }

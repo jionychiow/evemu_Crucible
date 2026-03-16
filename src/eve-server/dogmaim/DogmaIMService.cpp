@@ -504,13 +504,15 @@ PyResult DogmaIMBound::GetAllInfo(PyCallArgs& call, PyRep* getCharInfo, PyRep* g
                 structureInfo->SetItem(new PyInt(pClient->GetStationID()), new PyObject("util.KeyVal", entry.Encode()));
                 rsp->SetItemString("structureInfo", structureInfo);
             } else {
-                rsp->SetItemString("structureInfo", PyStatic.NewNone());
+                _log(SERVICE__WARNING, "Station::Populate failed for station %u", pClient->GetStationID());
+                rsp->SetItemString("structureInfo", new PyDict());
             }
         } else {
-            rsp->SetItemString("structureInfo", PyStatic.NewNone());
+            _log(SERVICE__WARNING, "Failed to load station %u", pClient->GetStationID());
+            rsp->SetItemString("structureInfo", new PyDict());
         }
     } else {
-        rsp->SetItemString("structureInfo", PyStatic.NewNone());
+        rsp->SetItemString("structureInfo", new PyDict());
     }
     
     // Set "locationInfo" in the Dictionary
@@ -572,7 +574,17 @@ PyResult DogmaIMBound::GetAllInfo(PyCallArgs& call, PyRep* getCharInfo, PyRep* g
         charInfoTuple->SetItem(1, charBrain);
         rsp->SetItemString("charInfo", charInfoTuple);
     } else {
-        rsp->SetItemString("charInfo", new PyDict());
+        // Return empty char info tuple to prevent client errors
+        PyDict* emptyCharInfo = new PyDict();
+        PyTuple* emptyCharBrain = new PyTuple(4);
+        emptyCharBrain->SetItem(0, new PyInt(pClient->GetCharacterID()));
+        emptyCharBrain->SetItem(1, new PyList());
+        emptyCharBrain->SetItem(2, new PyList());
+        emptyCharBrain->SetItem(3, new PyList());
+        PyTuple* charInfoTuple = new PyTuple(2);
+        charInfoTuple->SetItem(0, emptyCharInfo);
+        charInfoTuple->SetItem(1, emptyCharBrain);
+        rsp->SetItemString("charInfo", charInfoTuple);
     }
 
     // Set "shipInfo" in the Dictionary  -fixed 26Mar16
@@ -590,19 +602,109 @@ PyResult DogmaIMBound::GetAllInfo(PyCallArgs& call, PyRep* getCharInfo, PyRep* g
         rsp->SetItemString("shipInfo", new PyDict());
     }
 
-    // Set "shipState" in the Dictionary  -fixed 26Mar16  -UD to add linked weapons 7Jan19
-    PyTuple* rspShipState;
+    // Set "shipState" in the Dictionary
+    // Client expects: (instanceCache, instanceFlagQuantityCache, wbData, heatStates)
+    // instanceCache: dict of itemID -> instance row
+    // instanceFlagQuantityCache: dict of itemID -> dict of flagID -> sublocation data
+    // wbData: dict of masterID -> list of slaveIDs (linked weapons)
+    // heatStates: list of heat states
+    
+    PyTuple* rspShipState = new PyTuple(4);
+    
+    // instanceCache: dict of itemID -> instance row
+    PyDict* instanceCache = new PyDict();
+    // instanceFlagQuantityCache: dict of itemID -> dict of flagID -> sublocation data
+    PyDict* instanceFlagQuantityCache = new PyDict();
+    
     if (pClient->GetShip().get() == nullptr) {
         _log(SERVICE__WARNING, "Client %u has no ship, returning empty shipState", pClient->GetCharacterID());
-        rspShipState = new PyTuple(3);
-        rspShipState->items[0] = new PyList();        // empty fitted module list
-        rspShipState->items[1] = new PyList();        // empty loaded charges
-        rspShipState->items[2] = new PyList();        // empty linked weapons
+        rspShipState->SetItem(0, instanceCache);
+        rspShipState->SetItem(1, instanceFlagQuantityCache);
+        rspShipState->SetItem(2, new PyDict());  // empty wbData
+        rspShipState->SetItem(3, new PyList());  // empty heat states
     } else {
-        rspShipState = new PyTuple(3);
-        rspShipState->items[0] = pClient->GetShip()->GetShipState();        // fitted module list
-        rspShipState->items[1] = pClient->GetShip()->GetChargeState();      // loaded charges (subLocation)
-        rspShipState->items[2] = pClient->GetShip()->GetLinkedWeapons();    // linked weapons
+        // Get ship state data
+        PyDict* shipState = pClient->GetShip()->GetShipState();
+        if (shipState != nullptr) {
+            // Convert shipState to instanceCache format
+            for (PyDict::const_iterator itr = shipState->begin(); itr != shipState->end(); ++itr) {
+                PyInt* itemID = itr->first->AsInt();
+                PyPackedRow* statusRow = itr->second->AsPackedRow();
+                if (itemID != nullptr && statusRow != nullptr) {
+                    // Create instance row: [itemID, attribute1, attribute2, ...]
+                    PyList* instanceRow = new PyList();
+                    instanceRow->AddItem(itemID->Clone());
+                    // Add attributes from status row
+                    uint32 instanceIDIndex = statusRow->header()->FindColumn("instanceID");
+                    uint32 onlineIndex = statusRow->header()->FindColumn("online");
+                    uint32 damageIndex = statusRow->header()->FindColumn("damage");
+                    uint32 chargeIndex = statusRow->header()->FindColumn("charge");
+                    uint32 skillPointsIndex = statusRow->header()->FindColumn("skillPoints");
+                    uint32 armorDamageIndex = statusRow->header()->FindColumn("armorDamage");
+                    uint32 shieldChargeIndex = statusRow->header()->FindColumn("shieldCharge");
+                    uint32 incapacitatedIndex = statusRow->header()->FindColumn("incapacitated");
+                    
+                    instanceRow->AddItem(statusRow->GetField(instanceIDIndex)->Clone());
+                    instanceRow->AddItem(statusRow->GetField(onlineIndex)->Clone());
+                    instanceRow->AddItem(statusRow->GetField(damageIndex)->Clone());
+                    instanceRow->AddItem(statusRow->GetField(chargeIndex)->Clone());
+                    instanceRow->AddItem(statusRow->GetField(skillPointsIndex)->Clone());
+                    instanceRow->AddItem(statusRow->GetField(armorDamageIndex)->Clone());
+                    instanceRow->AddItem(statusRow->GetField(shieldChargeIndex)->Clone());
+                    instanceRow->AddItem(statusRow->GetField(incapacitatedIndex)->Clone());
+                    
+                    instanceCache->SetItem(itemID->Clone(), instanceRow);
+                }
+            }
+            PyDecRef(shipState);
+        }
+        
+        // Get charge state data
+        PyDict* chargeState = pClient->GetShip()->GetChargeState();
+        if (chargeState != nullptr) {
+            // Convert chargeState to instanceFlagQuantityCache format
+            for (PyDict::const_iterator itr = chargeState->begin(); itr != chargeState->end(); ++itr) {
+                PyInt* flagID = itr->first->AsInt();
+                PyPackedRow* chargeRow = itr->second->AsPackedRow();
+                if (flagID != nullptr && chargeRow != nullptr) {
+                    // Get shipID from charge row
+                    uint32 instanceIDIndex = chargeRow->header()->FindColumn("instanceID");
+                    uint32 typeIDIndex = chargeRow->header()->FindColumn("typeID");
+                    PyInt* shipID = chargeRow->GetField(instanceIDIndex)->AsInt();
+                    if (shipID != nullptr) {
+                        // Get or create flag dict for this ship
+                        PyDict* flagDict = nullptr;
+                        PyRep* existingFlagDict = instanceFlagQuantityCache->GetItem(shipID);
+                        if (existingFlagDict != nullptr) {
+                            flagDict = existingFlagDict->AsDict();
+                        } else {
+                            flagDict = new PyDict();
+                            instanceFlagQuantityCache->SetItem(shipID->Clone(), flagDict);
+                        }
+                        
+                        // Create sublocation data: [flagID, typeID]
+                        PyList* sublocation = new PyList();
+                        sublocation->AddItem(flagID->Clone());
+                        sublocation->AddItem(chargeRow->GetField(typeIDIndex)->Clone());
+                        
+                        flagDict->SetItem(flagID->Clone(), sublocation);
+                    }
+                }
+            }
+            PyDecRef(chargeState);
+        }
+        
+        // Get linked weapons data (wbData)
+        PyRep* linkedWeapons = pClient->GetShip()->GetLinkedWeapons();
+        if (linkedWeapons == nullptr || linkedWeapons->IsNone()) {
+            rspShipState->SetItem(2, new PyDict());  // empty wbData
+        } else {
+            rspShipState->SetItem(2, linkedWeapons);
+        }
+        
+        rspShipState->SetItem(0, instanceCache);
+        rspShipState->SetItem(1, instanceFlagQuantityCache);
+        rspShipState->SetItem(3, new PyList());  // empty heat states
     }
     rsp->SetItemString("shipState", rspShipState);
 
